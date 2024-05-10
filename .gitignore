@@ -1,0 +1,5 @@
+sessions/
+currentCountry.json
+oldSortedCountries.txt
+sorted_countries.json
+.env
