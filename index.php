@@ -47,6 +47,10 @@ if (!isset($_SESSION['turn'])) {
     $_SESSION['turn'] = 0;
 }
 
+if ($_SESSION["won"] || $_SESSION["lost"]) {
+    echo '<script>document.getElementById("copyBtn").style.display = "flex";</script>';
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['guessBtn'])) {
         $turn = $_SESSION['turn'];
@@ -353,17 +357,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         ?>
     </div>
-    <form id="restartForm" method="post">
-        <button type="submit" name="restartBtn" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Restart
-        </button>
-    </form>
 
     <div id="messageDiv">
         <?php if (isset($_SESSION['lost']) && $_SESSION['lost']): ?>
-        <div id="messageContent" class="text-2xl text-gray-800">
-            You lost!
-            <button id="dismissButton">Dismiss</button>
+        <div id="messageContent" class="text-center text-gray-800">
+            <p class="text-2xl mb-4">💔 You lost 💔</p>
+            <p class="text-xl">The country was:</p>
+            <p class="text-lg font-bold"><?php echo $currentCountryDataArray["Country"]  ?></p>
+            <div class="flex justify-center items-center">
+                <button id="dismissButton" class="mr-4 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded">Dismiss</button>
+                <button id="shareButtonWin" class="mr-4 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded">Share</button>
+            </div>
         </div>
         <?php endif; ?>
     </div>
