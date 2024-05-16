@@ -116,9 +116,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Geo Wordle">
+    <meta property="og:description" content="You get 8 chances to guess the correct country!">
+    <meta property="og:image" content="https://geo.voidem.com/geoWordleBanner.png">
+    <meta property="og:url" content="https://geo.voidem.com">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="https://geo.voidem.com/geoWordleBanner.png">
     <title>Geo Wordle</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#4F46E5">
+    
     <style>
 
         body {
@@ -366,6 +375,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body class="bg-gray-100 p-8">
 <div class="max-w-lg mx-auto bg-white rounded shadow-md p-8">
     <h1 class="text-3xl font-bold mb-6">Geo Wordle</h1>
+    <p class="text-lg text-gray-700 mb-6">You get 8 chances to guess the correct country!</p>
     <form id="guessForm" method="post">
         <label for="chosenCountry" class="block text-sm font-medium text-gray-700">Select a country:</label>
         <div class="relative">
@@ -411,7 +421,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
 
 
-    <div class="grid-container mt-8">
+    <div class="grid-container mt-4">
         <div class="grid-item">Country</div>
         <div class="grid-item">Region</div>
         <div class="grid-item">Population</div>
@@ -602,8 +612,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script>
         document.getElementById('shareButtonWin').addEventListener('click', function() {
             var copy1 = `<?php echo str_replace(PHP_EOL, '\n', str_replace("'", "\\'", $string2)); ?>`;
-            var copyHead = 'Voidem Geo Wordle \n\n';
-            var copyFoot = '\nPlay now at https://geo.voidem.com';
+            var copyHead = 'Geo Wordle \n\n';
+            var copyFoot = '\nPlay now at https://geo.voidem.com/';
             var copy = copyHead + copy1 + copyFoot;
             navigator.clipboard.writeText(copy);
             document.getElementById('shareButtonWin').innerHTML = 'Copied!';

@@ -3,7 +3,7 @@
 
 A geography wordle-like game for guessing countries
 
-
+![Geo Wordle Banner](https://geo.voidem.com/geoWordleBanner.png)
 
 ## Features
 
@@ -14,7 +14,7 @@ A geography wordle-like game for guessing countries
 
 ## Live website
 
-![Geo Wordle](https://callum.christmas/img/urpy8.png)
+![https://geo.voidem.com](https://callum.christmas/img/484oc.png)
 
 https://geo.voidem.com
 ## Important Info
