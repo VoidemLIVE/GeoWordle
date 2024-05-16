@@ -10,10 +10,11 @@ A geography wordle-like game for guessing countries
 - 5 characteristics of a country (excluding the name)
 - Daily country switch (Cron job not included in repo)
 - 227 different countries that can be chosen at random
+- 2 Hints that can be used as you make more guesses
 
 ## Live website
 
-![Geo Wordle](https://i.imgur.com/6vEUlkv.png)
+![Geo Wordle](https://callum.christmas/img/urpy8.png)
 
 https://geo.voidem.com
 ## Important Info

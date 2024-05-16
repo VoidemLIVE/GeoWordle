@@ -21,6 +21,13 @@ function getClientIP() {
 function logToConsole($data) {
     echo "<script>console.log('{$data}')</script>";
 }
+
+// DEBUG MENU:
+$debug = isset($_GET['d']) ? $_GET['d'] : '';
+if ($debug){
+    echo '<script>document.getElementById("debugMenu").style.display = "flex";</script>';
+}
+
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
 ini_set('session.save_path', '/var/www/html/geole/sessions');
@@ -47,6 +54,16 @@ if (!isset($_SESSION['turn'])) {
     $_SESSION['turn'] = 0;
 }
 
+if ($_SESSION['turn'] >= 1) {
+    $_SESSION['hint1'] = true;
+    echo '<script>document.getElementById("hint1Lock").style.display = "none";</script>';
+}
+
+if ($_SESSION['turn'] >= 3) {
+    $_SESSION['hint2'] = true;
+    echo '<script>document.getElementById("hint2Lock").style.display = "none";</script>';
+}
+
 if ($_SESSION["won"] || $_SESSION["lost"]) {
     echo '<script>document.getElementById("copyBtn").style.display = "flex";</script>';
 }
@@ -56,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $turn = $_SESSION['turn'];
 
 
-        if ($turn >= 6) {
+        if ($turn >= 8) {
             $_SESSION['lost'] = true;
 
             echo '<script>document.getElementById("messageDiv").style.display = "flex";</script>';
@@ -101,7 +118,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geo Wordle</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
     <style>
+
+        body {
+            margin: 0;
+        }
         .grid-container {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -280,6 +302,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         #dismissButtonHint2:hover {
             background-color: #45a049;
         }
+
+
+        #debugMenu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        #messageContentDebugMenu {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #dismissButtonDebugMenu {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #dismissButtonDebugMenu:hover {
+            background-color: #45a049;
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 5px);
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            width: auto;
+            min-width: 100px;
+            height: auto;
+            min-height: 30px; 
+        }
+
+
+
     </style>
 </head>
 
@@ -309,15 +389,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <button type="submit" name="guessBtn" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" <?php if(isset($_SESSION['won']) && $_SESSION['won']) echo 'disabled'; ?>>
             Guess
+            <span class="ml-2 bg-indigo-400 px-2 py-1 rounded text-sm font-bold"><?php echo $_SESSION['turn'] ?>/8 Guesses</span>
         </button>
     </form>
     <div class="flex space-x-4 mt-4">
     <button type="submit" name="hint1Btn" id="hint1Btn" class="flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" <?php if(!isset($_SESSION['hint1']) || !$_SESSION['hint1']) echo 'disabled'; ?>>
         Hint 1
+        <span class="tooltip" <?php if(isset($_SESSION['hint1']) && !$_SESSION['hint1']) echo 'style="display:inline;"'; ?>>Guess twice to unlock</span>
         <img id="hint1Lock" src="lock.png" alt="Hint 1" class="w-4 h-4 ml-2" />
     </button>
     <button type="submit" name="hint2Btn" id="hint2Btn" class="flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" <?php if(!isset($_SESSION['hint2']) || !$_SESSION['hint2']) echo 'disabled'; ?>>
         Hint 2
+        <span class="tooltip" <?php if(isset($_SESSION['hint2']) && !$_SESSION['hint2']) echo 'style="display:inline;"'; ?>>Guess four times to unlock</span>
         <img id="hint2Lock" src="lock.png" alt="Hint 2" class="w-4 h-4 ml-2" />
     </button>
     <button type="submit" name="copyBtn" id="copyBtn" class="flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500" style="display:none;">
@@ -357,13 +440,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         ?>
     </div>
+    <footer class="bg-gray-300 py-4 mt-8 fixed bottom-0 left-0 w-full">
+        <div class="flex justify-center items-center text-gray-600 text-lg">
+            <span>&copy; <?php echo date("Y"); ?> <a href="https://voidem.com" target="_blank" class="hover:text-gray-800">Voidem</a> / <a href="https://github.com/voidemlive/geowordle" target="_blank" class="hover:text-gray-800">Geo Wordle</a></span>
+        </div>
+    </footer>
+
+
+    <?php
+    /*
+
+
+    END OF ACTUAL PAGE HTML!!!!
+
+
+    */
+    ?>
+
+
 
     <div id="messageDiv">
         <?php if (isset($_SESSION['lost']) && $_SESSION['lost']): ?>
         <div id="messageContent" class="text-center text-gray-800">
             <p class="text-2xl mb-4">💔 You lost 💔</p>
             <p class="text-xl">The country was:</p>
-            <p class="text-lg font-bold"><?php echo $currentCountryDataArray["Country"]  ?></p>
+            <p class="text-lg font-bold"><?php echo $currentCountryDataArray["Country"]  ?>!</p>
             <div class="flex justify-center items-center">
                 <button id="dismissButton" class="mr-4 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded">Dismiss</button>
                 <button id="shareButtonWin" class="mr-4 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded">Share</button>
@@ -376,6 +477,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if (isset($_SESSION['won']) && $_SESSION['won']): ?>
         <div id="messageContentWin" class="text-center text-gray-800">
             <p class="text-2xl mb-4">🎉 You won! 🎉</p>
+            <p class="text-xl">The country was:</p>
+            <p class="text-lg font-bold"><?php echo $currentCountryDataArray["Country"]  ?>!</p>
             <div class="flex justify-center items-center">
                 <button id="dismissButtonWin" class="mr-4 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded">Dismiss</button>
                 <button id="shareButtonWin" class="mr-4 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded">Share</button>
@@ -401,6 +504,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="text-lg font-bold"><?php echo $currentCountryDataArray["Country"][0]  ?></p>
             <div class="flex justify-center items-center">
                 <button id="dismissButtonHint2" class="mr-4 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="debugMenu" style="display:none;">
+        <div id="messageContentDebugMenu" class="text-center text-gray-800">
+            <p class="text-2xl mb-4">Debug Menu</p>
+            <p class="text-xl">Your IP: <?php echo getClientIP()?></p>
+            <p class="text-xl">Session ID: <?php echo 'sess_' . session_id(); ?></p>
+            <p class="text-xl">Turns: <?php echo $_SESSION['turn']?></p>
+            <p class="text-xl">Won: <?php echo ($_SESSION['won'] == 1) ? 'TRUE' : 'FALSE'; ?></p>
+            <p class="text-xl">Lost: <?php echo ($_SESSION['lost'] == 1) ? 'TRUE' : 'FALSE'; ?></p>
+            <div class="flex justify-center items-center">
+                <button id="dismissButtonDebugMenu" class="mr-4 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded">Dismiss</button>
             </div>
         </div>
     </div>
@@ -477,6 +595,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
     </script>
     <script>
+        document.getElementById('dismissButtonDebugMenu').addEventListener('click', function() {
+            document.getElementById('debugMenu').style.display = 'none';
+        });
+    </script>
+    <script>
         document.getElementById('shareButtonWin').addEventListener('click', function() {
             var copy1 = `<?php echo str_replace(PHP_EOL, '\n', str_replace("'", "\\'", $string2)); ?>`;
             var copyHead = 'Voidem Geo Wordle \n\n';
@@ -486,6 +609,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById('shareButtonWin').innerHTML = 'Copied!';
         });
     </script>
+
+    <script>
+            document.getElementById('hint1Btn').addEventListener('mouseover', function() {
+        var hint1Btn = document.getElementById('hint1Btn');
+        var tooltip = document.querySelector('#hint1Btn .tooltip');
+        var hint1Truth = '<?php echo $_SESSION['hint1']; ?>';
+        
+        if (!hint1Truth) {
+            var rect = hint1Btn.getBoundingClientRect();
+            var left = rect.left + (rect.width / 2);
+            var top = rect.top + rect.height + 5; 
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            tooltip.style.display = 'inline';
+        }
+    });
+
+    document.getElementById('hint1Btn').addEventListener('mouseout', function() {
+        document.querySelector('#hint1Btn .tooltip').style.display = 'none';
+    });
+    </script>
+
+    <script>
+            document.getElementById('hint2Btn').addEventListener('mouseover', function() {
+            var hint1Btn = document.getElementById('hint2Btn');
+            var tooltip = document.querySelector('#hint2Btn .tooltip');
+            var hint1Truth = '<?php echo $_SESSION['hint2']; ?>';
+            
+            if (!hint1Truth) {
+                var rect = hint1Btn.getBoundingClientRect();
+                var left = rect.left + (rect.width / 2);
+                var top = rect.top + rect.height + 5; 
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = top + 'px';
+                tooltip.style.display = 'inline';
+            }
+        });
+
+        document.getElementById('hint2Btn').addEventListener('mouseout', function() {
+            document.querySelector('#hint2Btn .tooltip').style.display = 'none';
+        });
+        </script>
 
 </body>
 </html>
