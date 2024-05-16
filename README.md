@@ -5,7 +5,6 @@ A geography wordle-like game for guessing countries
 
 
 
-
 ## Features
 
 - 5 characteristics of a country (excluding the name)
@@ -21,8 +20,13 @@ https://geo.voidem.com
 
 This repo does NOT contain sorted_countries.json or currentCountry.json. sorted_countries.json should contain the data of all countries listed. currentCountry.json will be changed when newCountry.php is run.
 
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`SESS_FOLDER="/path/to/sessions/folder/"`
+
 
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
