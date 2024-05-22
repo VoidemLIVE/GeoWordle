@@ -1,6 +1,8 @@
 
 # Geo Wordle
 
+## ⚠️ Archived due to new features being closed-source ⚠️
+
 A geography wordle-like game for guessing countries
 
 ![Geo Wordle Banner](https://geo.voidem.com/geoWordleBanner.png)
